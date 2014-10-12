@@ -5,7 +5,7 @@ namespace Zoop\Pyro\Test;
 use Zend\ServiceManager\ServiceManager as ZendServiceManager;
 use Zend\Console\Console;
 use Zend\Mvc\Service\ServiceManagerConfig;
-use Zoop\Pyro\Test\Request;
+use Zoop\Pyro\Test\Mocks\Request;
 use Zoop\Pyro\Test\Helper\DataCreator;
 
 /**

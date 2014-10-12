@@ -1,6 +1,6 @@
 <?php
 
-namespace Zoop\Pyro\Test;
+namespace Zoop\Pyro\Test\Mocks;
 
 use Zend\Stdlib\Parameters;
 use Zend\Http\PhpEnvironment\Request as HttpRequest;
