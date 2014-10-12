@@ -7,10 +7,8 @@ ini_set('display_errors', '1');
 ini_set('memory_limit', '256M');
 
 $applicationRoot = '/../';
-
-chdir(__DIR__ . $applicationRoot);
-
-$loader = require_once('vendor/autoload.php');
+chdir(__DIR__ . '/../');
+$loader = require __DIR__ . '/../vendor/autoload.php';
 
 if (!isset($loader)) {
     throw new RuntimeException('vendor/autoload.php could not be found. Did you run `php composer.phar install`?');
