@@ -19,6 +19,7 @@ class SpyingFirewallListener extends FirewallListener
     private $doFirewallWasRequested   = false;
     private $preFirewallWasRequested  = false;
     private $postFirewallWasRequested = false;
+    private $isFirewallEnabled = false;
 
     public function attach(EventManagerInterface $events)
     {
@@ -35,6 +36,15 @@ class SpyingFirewallListener extends FirewallListener
     public function doFirewall(EventInterface $event)
     {
         $this->doFirewallWasRequested = true;
+        
+        // check firewall enabled or disabled
+        $serviceManager = $this->getServiceLocator();
+        $application = $serviceManager->get('Application');
+        $request = $application->getRequest();
+        
+        if ($serviceManager->get('config')['zoop']['pyro']['enable']) {
+            $this->isFirewallEnabled = true;
+        }
     }
 
     /**
@@ -81,5 +91,15 @@ class SpyingFirewallListener extends FirewallListener
     public function getPostFirewallWasRequested()
     {
         return $this->postFirewallWasRequested;
+    }
+    
+    /**
+     * Get $isFirewallEnabled value
+     *
+     * @return boolean
+     */
+    public function isFirewallEnabled()
+    {
+        return $this->isFirewallEnabled;
     }
 }

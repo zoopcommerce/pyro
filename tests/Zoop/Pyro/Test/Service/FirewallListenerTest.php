@@ -23,8 +23,11 @@ class FirewallListenerTest extends AbstractTest
      */
     public function testTriggerFirewallDispatch()
     {
-        $spyListener = new SpyingFirewallListener;
-
+        self::setUpFirewallOff();
+        
+        $spyListener  = new SpyingFirewallListener;
+        $spyListener->setServiceLocator($this->getServiceManager());
+        
         $eventManager = new EventManager;
         $eventManager->attach($spyListener);
         $eventManager->trigger(FirewallEvent::EVENT_FIREWALL_DISPATCH);
@@ -66,15 +69,31 @@ class FirewallListenerTest extends AbstractTest
      */
     public function testFirewallOff()
     {
-
+        self::setUpFirewallOff();
+        $spyListener  = new SpyingFirewallListener;
+        $spyListener->setServiceLocator($this->getServiceManager());
+        
+        $eventManager = new EventManager;
+        $eventManager->attach($spyListener);
+        $eventManager->trigger(FirewallEvent::EVENT_FIREWALL_DISPATCH);
+        
+        $this->assertFalse($spyListener->isFirewallEnabled());
     }
 
     /**
-     * Test getting adapter
+     * Test if firewall is on
      */
     public function testFirewallOn()
     {
-
+        self::setUpFirewallOn();
+        $spyListener  = new SpyingFirewallListener;
+        $spyListener->setServiceLocator($this->getServiceManager());
+        
+        $eventManager = new EventManager;
+        $eventManager->attach($spyListener);
+        $eventManager->trigger(FirewallEvent::EVENT_FIREWALL_DISPATCH);
+        
+        $this->assertTrue($spyListener->isFirewallEnabled());
     }
 
     /**

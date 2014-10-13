@@ -44,7 +44,7 @@ abstract class AbstractTest extends AbstractHttpControllerTestCase
             require __DIR__ . '/../../../test.application.on.config.php'
         );
 
-        ServiceManager::setServiceConfig(require __DIR__ . '/../../../test.application.off.config.php');
+        ServiceManager::setServiceConfig(require __DIR__ . '/../../../test.application.on.config.php');
         self::$serviceManager = ServiceManager::getServiceManager();
 
         $this->bootstrap();
