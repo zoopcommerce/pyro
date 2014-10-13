@@ -32,7 +32,7 @@ class FirewallListenerTest extends AbstractTest
         $eventManager->attach($spyListener);
         $eventManager->trigger(FirewallEvent::EVENT_FIREWALL_DISPATCH);
 
-        $this->assertTrue($spyListener->getDoFirewallWasRequested());
+        $this->assertTrue($spyListener->isFirewallDispatch());
     }
 
     /**
@@ -46,7 +46,7 @@ class FirewallListenerTest extends AbstractTest
         $eventManager->attach($spyListener);
         $eventManager->trigger(FirewallEvent::EVENT_FIREWALL_PRE_PROCESS);
 
-        $this->assertTrue($spyListener->getPreFirewallWasRequested());
+        $this->assertTrue($spyListener->isFirewallPreProcessRequest());
     }
 
     /**
@@ -60,7 +60,7 @@ class FirewallListenerTest extends AbstractTest
         $eventManager->attach($spyListener);
         $eventManager->trigger(FirewallEvent::EVENT_FIREWALL_POST_PROCESS);
 
-        $this->assertTrue($spyListener->getPostFirewallWasRequested());
+        $this->assertTrue($spyListener->isFirewallPostProcessRequest());
     }
 
 
@@ -94,22 +94,6 @@ class FirewallListenerTest extends AbstractTest
         $eventManager->trigger(FirewallEvent::EVENT_FIREWALL_DISPATCH);
         
         $this->assertTrue($spyListener->isFirewallEnabled());
-    }
-
-    /**
-     * Test firewall dispatch with denied ip address
-     */
-    public function testFirewallDispatchDeniedIpAddress()
-    {
-
-    }
-
-    /**
-     * Test firewall dispatch with allowed ip address
-     */
-    public function testFirewallDispatchAllowedIpAddress()
-    {
-
     }
 
     /**

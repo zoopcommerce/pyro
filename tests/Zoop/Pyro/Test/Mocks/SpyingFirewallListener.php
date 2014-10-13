@@ -16,11 +16,11 @@ use Zoop\Pyro\FirewallEvent;
  */
 class SpyingFirewallListener extends FirewallListener
 {
-    private $doFirewallWasRequested   = false;
-    private $preFirewallWasRequested  = false;
-    private $postFirewallWasRequested = false;
-    private $isFirewallEnabled = false;
-
+    private $isFirewallDispatch = false;
+    private $isFirewallEnabled  = false;
+    private $isFirewallPreProcessRequest  = false;
+    private $isFirewallPostProcessRequest = false;
+    
     public function attach(EventManagerInterface $events)
     {
         $this->listeners = [
@@ -35,7 +35,7 @@ class SpyingFirewallListener extends FirewallListener
      */
     public function doFirewall(EventInterface $event)
     {
-        $this->doFirewallWasRequested = true;
+        $this->isFirewallDispatch = true;
         
         // check firewall enabled or disabled
         $serviceManager = $this->getServiceLocator();
@@ -48,13 +48,13 @@ class SpyingFirewallListener extends FirewallListener
     }
 
     /**
-     * Get $doFirewallWasRequested value
+     * Get $isFirewallDispatch value
      *
      * @return boolean
      */
-    public function getDoFirewallWasRequested()
+    public function isFirewallDispatch()
     {
-        return $this->doFirewallWasRequested;
+        return $this->isFirewallDispatch;
     }
 
     /**
@@ -62,17 +62,17 @@ class SpyingFirewallListener extends FirewallListener
      */
     public function preFirewall(EventInterface $event)
     {
-        $this->preFirewallWasRequested = true;
+        $this->isFirewallPreProcessRequest = true;
     }
 
     /**
-     * Get $preFirewallWasRequested value
+     * Get $isFirewallPreProcessRequest value
      *
      * @return boolean
      */
-    public function getPreFirewallWasRequested()
+    public function isFirewallPreProcessRequest()
     {
-        return $this->preFirewallWasRequested;
+        return $this->isFirewallPreProcessRequest;
     }
 
     /**
@@ -80,17 +80,17 @@ class SpyingFirewallListener extends FirewallListener
      */
     public function postFirewall(EventInterface $event)
     {
-        $this->postFirewallWasRequested = true;
+        $this->isFirewallPostProcessRequest = true;
     }
 
     /**
-     * Get $postFirewallWasRequested value
+     * Get $isFirewallPostProcessRequest value
      *
      * @return boolean
      */
-    public function getPostFirewallWasRequested()
+    public function isFirewallPostProcessRequest()
     {
-        return $this->postFirewallWasRequested;
+        return $this->isFirewallPostProcessRequest;
     }
     
     /**
