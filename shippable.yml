@@ -9,8 +9,8 @@ services:
   - mongodb
 
 env:
-  - FOO="bar"
-  - secure: UXMqB9b5baUU6gE9P3hEsVgUjY/grNSg3FAmgG/Nx2ZyrSZQ/CzuOZsAR6sG0r/IqyX1YlKkdvj5NvxI06Vg7mCq7kiKfiP0PgTguLIxOODcRvclVrCaJUW2KlD6iDdoxiIoDJ8vpaF00hgbXyQEFrPlZICG3Gy7jbuUboKnOwmBpf0StYeDRZBhowp5Wza42/opSS+FlUX+T3EkJJEaL0+XSefgq/yedqbizO583LG0pMAtaQqp0+xY9Rf+RC9E43CEfQkGEkTi9YN5YbURBGe8KmsUP/8cFMxml38NKJNXdTca+InCpBppKPmhfzMpeQyk1fV5lRBJavy+qfHgww==
+  global:
+    - secure: D55enNphdzXd9u92Td/TzymQTbuiurunynzCog0kEh1g0/EuWh9LclOS916pl5+zYCwsWl+0olYzyrU9hCbGDSf1paExYzef3XBJ6iM1vl+RNKArelkL+dLrrXWj8UU44WgcZJ8R1s6Yld2MtFJNy7gSjN8uQRYsDzsQq6mKR0/3bkdwddDCD6kZuBWFxIOjkoiM4VQ1xQddCuod9xLs1fZ5CLzoO5+VIohTFhjcUeBf0tiJSM/nAkQzKdcyIBKE7Lm2ySUV4R9CiuCgkcqFbJJF6KBHqqd3hssP5RaQWhCTw0YBzYVgf+1xhN4rQt/l057e2DCV5B2vKnLQxPzvnw==
   
 before_script: 
   - mkdir -p shippable/testresults
@@ -18,8 +18,7 @@ before_script:
   - echo "extension=mongo.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
   - echo "xdebug.max_nesting_level = 1000" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
   - composer self-update
-  - echo "This is the token - ${GITHUB_TOKEN} - which appears empty"
-  - echo "This is an environmental var - ${FOO}"
+  - composer config -g github-oauth.github.com $GITHUB_TOKEN
   - composer install
 
 script:
