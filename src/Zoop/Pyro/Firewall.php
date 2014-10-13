@@ -3,24 +3,39 @@
 namespace Zoop\Pyro;
 
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
-use Zoop\Pyro\Adapter\AdapterInterface;
+use Zend\ServiceManager\ServiceLocatorAwareTrait;
+use Zoop\Pyro\Adapters\AdapterInterface;
+use Zoop\Pyro\Exception\IpAddressDeniedException;
 
-class Firewall implements ServiceLocatorAwareInterface
+/**
+ * @since   0.1
+ * @version $Revision$
+ * @author  Dolly Aswin <dolly.aswin@gmail.com>
+ * @author  Josh Stuart <josh.stuart@zoopcommerce.com>
+ */
+class Firewall implements AdapterInterface, ServiceLocatorAwareInterface
 {
-    protected $ipAddress;
+    use ServiceLocatorAwareTrait;
+
+    const ALLOW = 'allow';
+    const DENY = 'deny';
+
     protected $adapter;
-    protected $isBlocked = false;
-    
+    protected $mode = self::ALLOW;
+
     /**
+     *
      * @param AdapterInterface $adapter
+     * @param string $mode
      */
-    public function __construct(AdapterInterface $adapter)
+    public function __construct(AdapterInterface $adapter, $mode = self::ALLOW)
     {
         $this->setAdapter($adapter);
+        $this->setMode($mode);
     }
 
     /**
-     * 
+     *
      * @return AdapterInterface
      */
     public function getAdapter()
@@ -37,58 +52,93 @@ class Firewall implements ServiceLocatorAwareInterface
     }
 
     /**
-     * If no IP address is explicitly set, Pyro tries to determine
-     * the users IP address from the request.
-     * 
-     * @return string
+     * Processes the firewall request
+     *
+     * @param string $ipAddress
+     * @throws IpAddressDeniedException
      */
-    public function getIpAddress()
+    public function process($ipAddress)
     {
-        if (!isset($this->ipAddress)) {
-            //try client ip and ip behind proxy first
-            $this->ipAddress = filter_input(INPUT_SERVER, 'HTTP_CLIENT_IP');
-            if (empty($this->ipAddress)) {
-                $this->ipAddress = filter_input(INPUT_SERVER, 'HTTP_X_FORWARDED_FOR');
+        if ($this->getMode() === self::ALLOW) {
+            // default allow mode
+            if ($this->isDenied($ipAddress)) {
+                throw new IpAddressDeniedException('The ip ' . $ipAddress . ' is denied.');
             }
-
-            //get regular ip if those can't be found.
-            //this still isn't 100% accurate
-            if (empty($this->ipAddress)) {
-                $this->ipAddress = filter_input(INPUT_SERVER, 'REMOTE_ADDR');
+        } else {
+            // default disallow mode
+            if (!$this->isAllowed($ipAddress)) {
+                throw new IpAddressDeniedException('The ip ' . $ipAddress . ' is denied.');
             }
         }
-        return $this->ipAddress;
     }
 
     /**
-     * @param string $ipAddress
+     * {@inheritdoc}
      */
-    public function setIpAddress($ipAddress)
+    public function isAllowed($ipAddress)
     {
-        $this->ipAddress = $ipAddress;
-    }
-    
-    /**
-     * @return boolean
-     */
-    public function isAllowed()
-    {
-        return !$this->isBlocked();
-    }
-    
-    /**
-     * @return boolean
-     */
-    public function isBlocked()
-    {
-        return $this->isBlocked;
+        return $this->getAdapter()
+            ->isAllowed($ipAddress);
     }
 
     /**
-     * @param boolean $isBlocked
+     * {@inheritdoc}
      */
-    public function setIsBlocked($isBlocked)
+    public function isDenied($ipAddress)
     {
-        $this->isBlocked = (boolean) $isBlocked;
+        return $this->getAdapter()
+            ->isDenied($ipAddress);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function deny($ipAddress)
+    {
+        $this->getAdapter()->deny($ipAddress);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function allow($ipAddress)
+    {
+        $this->getAdapter()->allow($ipAddress);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function removeIpAddress($ipAddress)
+    {
+        $this->getAdapter()->removeIpAddress($ipAddress);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function removeIpAddresses(array $ipAddresses)
+    {
+        $this->getAdapter()->removeIpAddresses($ipAddresses);
+    }
+
+    /**
+     * Returns the firewall mode: allow or deny
+     *
+     * @return string
+     */
+    public function getMode()
+    {
+        return $this->mode;
+    }
+
+    /**
+     * Sets the firewall mode: allow or deny
+     *
+     * @param string $mode
+     */
+    public function setMode($mode)
+    {
+        $this->mode = $mode;
     }
 }
